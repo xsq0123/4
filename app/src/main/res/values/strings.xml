@@ -2,7 +2,7 @@
     <string name="app_name">记账本</string>
     <string name="amount">金额：</string>
     <string name="etCount">输入你的花销</string>
-    <string name="type">类型</string>
+    <string name="type">类别</string>
     <string name="expenditure">支出</string>
     <string name="income">收入</string>
     <string name="Description">描述：</string>
