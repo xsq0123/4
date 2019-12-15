@@ -3,6 +3,7 @@ package com.example.billbook;
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.res.Configuration;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.icu.text.SimpleDateFormat;
@@ -44,7 +45,14 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        if(this.getResources().getConfiguration().orientation
+                == Configuration.ORIENTATION_PORTRAIT){
+
+            setContentView(R.layout.activity_main);
+        }
+        else{
+            setContentView(R.layout.landscapet);
+        }
         //初始化 DBManager
         mgr = new DBManager(this);
         etCount = (EditText) findViewById(R.id.etCount);
@@ -78,25 +86,60 @@ public class MainActivity extends AppCompatActivity {
                 count.setMoney(Double.parseDouble(etCount.getText().toString()));
                 count.setDescribe(etDescribe.getText().toString());
                 count.setType(countType + "");
-                mgr.insert(count); //插入数值
+                mgr.insert(count); //插入
                 resetInfo();
                 //mgr.dbFindAll();
                 //showList();
-
             }
         });
         resetInfo();
+
+        Button selBtn=(Button) findViewById(R.id.queall);
+        selBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dbFindAll();
+
+
+            }
+        });
+
+        listView=(ListView) findViewById(R.id.listView);
+        //初始化 DBManager
+        data=new ArrayList<Map<String,Object>>();
+        dbFindAll();
+        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+
+                Map<String,Object>listItem=(Map<String,Object>)
+                        listView.getItemAtPosition(position);
+            }
+        });
+
+        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                Map<String,Object>listItem=(Map<String,Object>)
+                        listView.getItemAtPosition(position);
+//                et_word.setText((String) listItem.get("word"));
+//                et_mean.setText((String) listItem.get("mean"));
+//                et_egg.setText((String) listItem.get("egg"));
+//                selID=(String) listItem.get("_id");
+                //Log.i("mydbDemo","id="+selID);
+            }
+        });
     }
+
     public void resetInfo(){
         Double out = mgr.getResult(OUT);
         Double in = mgr.getResult(IN);
         Double all = in - out;
-        tvInfo.setText("总计支出："+out+" 总计收入："+in+" \n 结余：" +all+"。");
+        tvInfo.setText("合计支出："+out+" 合计收入："+in+" \n 支出收入合计：" +all+"。");
     }
     @Override
     protected void onDestroy() {
-        super.onDestroy();
-        //应用的最后一个 Activity 关闭时应释放 DB
+        super.onDestroy();//应用的最后一个 Activity 关闭时应释放 DB
         mgr.closeDB();
     }
 
@@ -107,10 +150,7 @@ public class MainActivity extends AppCompatActivity {
                 new int[]{R.id.tvID,R.id.tvmoney,R.id.tvtype,R.id.tvdate,R.id.tvdescribe});
         listView.setAdapter(listAdapter);
     }
-
     public void dbFindAll(){
-        data=new ArrayList<Map<String,Object>>();
-
         data.clear();
         cursor=db.query(com.example.billbook.DBHelper.TABLE_NAME,null,null,null,null,
                 null,"id ASC");
@@ -127,13 +167,12 @@ public class MainActivity extends AppCompatActivity {
             item.put("type",type);
             item.put("date",date);
             item.put("describe",describe);
-
             data.add(item);
             cursor.moveToNext();
-
         }
-        //  showList();
+         showList();
     }
+
 
 
 

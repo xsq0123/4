@@ -30,7 +30,7 @@ public class DBManager {
         db = helper.getWritableDatabase();
     }
     public void insert(Count count) {
-        db.beginTransaction(); //开始事务
+        db.beginTransaction(); //事务
         try {
             ContentValues contentValues = new ContentValues();
             contentValues.put("count",count.getMoney());
@@ -38,9 +38,9 @@ public class DBManager {
             contentValues.put("date", count.getDate());
             contentValues.put("describe",count.getDescribe());
             db.insert(TABLE_NAME,"id",contentValues);
-            db.setTransactionSuccessful(); //设置事务成功完成
+            db.setTransactionSuccessful();
         }finally {
-            db.endTransaction(); //结束事务
+            db.endTransaction();
         }
     }
     public Double getResult(int type)

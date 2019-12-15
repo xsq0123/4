@@ -1,5 +1,4 @@
 package com.example.billbook;
-
 public class Count {
     private Double money;
     private String type;
